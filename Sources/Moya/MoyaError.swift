@@ -25,7 +25,9 @@ public extension MoyaError {
     /// Depending on error type, returns a `Response` object.
     var response: Moya.Response? {
         switch self {
-        case .imageMapping(let response): return response
+        case .imageMapping(let response):
+          assert(false) 
+          return response
         case .jsonMapping(let response): return response
         case .stringMapping(let response): return response
         case .statusCode(let response): return response
