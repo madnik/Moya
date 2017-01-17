@@ -63,14 +63,9 @@ end
 
 def device_os
   return {
-    ios: "10.2",
-    tvos: "10.0"
+    ios: "latest",
+    tvos: "latest"
   }
-end
-
-def open_simulator_and_sleep(platform)
-  return if platform == :macos # Don't need a sleep on macOS because it runs first.
-  sh "xcrun instruments -w '#{device_names[platform]} (#{device_os[platform]})' || sleep 15"
 end
 
 def xcodebuild(tasks, platform, xcprety_args: '')
@@ -78,7 +73,6 @@ def xcodebuild(tasks, platform, xcprety_args: '')
   scheme = schemes[platform]
   destination = devices[platform]
 
-  open_simulator_and_sleep(platform)
   safe_sh "set -o pipefail && xcodebuild -project '#{moya_project}' -scheme '#{scheme}' -configuration '#{configuration}' -sdk #{sdk} -destination '#{destination}' #{tasks} | bundle exec xcpretty -c #{xcprety_args}"
 end
 
@@ -90,7 +84,6 @@ def xcodebuild_demo(tasks, xcprety_args: '')
   demo_scheme = 'Demo'
 
   Dir.chdir('Demo') do
-    open_simulator_and_sleep(platform)
     safe_sh "set -o pipefail && xcodebuild -workspace '#{demo_workspace}' -scheme '#{demo_scheme}' -configuration '#{configuration}' -sdk #{sdk} -destination '#{destination}' #{tasks} | bundle exec xcpretty -c #{xcprety_args}"
   end
 end
